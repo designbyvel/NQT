@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NQT Verbal Ability Assessment</title>
+
+<style>
+
+:root{
+  --navy:#12213f;
+  --navy2:#1d3155;
+  --paper:#faf8f3;
+  --line:#e4ded0;
+  --gold:#c9a227;
+  --gold-dark:#98781c;
+  --ink:#22283a;
+  --soft:#697086;
+  --green:#347a57;
+  --red:#b23a48;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(201,162,39,.08),transparent 35%),
+    radial-gradient(circle at 90% 90%,rgba(201,162,39,.07),transparent 35%),
+    var(--navy);
+  font-family:Arial,sans-serif;
+  color:var(--ink);
+  padding:25px 15px 50px;
+}
+
+.container{
+  width:100%;
+  max-width:760px;
+  margin:auto;
+  background:var(--paper);
+  box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+
+.header{
+  background:var(--navy);
+  color:white;
+  padding:30px;
+}
+
+.small-title{
+  color:var(--gold);
+  font-size:12px;
+  letter-spacing:2px;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.header h1{
+  margin:8px 0;
+  font-family:Georgia,serif;
+  font-size:30px;
+}
+
+.header p{
+  margin:0;
+  color:#cbd2df;
+  line-height:1.5;
+}
+
+.start-screen{
+  padding:40px 30px;
+}
+
+.start-screen h2{
+  font-family:Georgia,serif;
+  font-size:27px;
+  color:var(--navy);
+}
+
+.instructions{
+  background:#f1ede2;
+  border:1px solid var(--line);
+  padding:18px;
+  line-height:1.7;
+  margin:20px 0;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:1px solid #cfc7b2;
+  border-radius:4px;
+  font-size:16px;
+  margin:8px 0 18px;
+}
+
+button{
+  border:0;
+  border-radius:4px;
+  padding:13px 22px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.start-btn{
+  background:var(--gold);
+  color:#211a04;
+  width:100%;
+}
+
+.start-btn:hover{
+  background:var(--gold-dark);
+  color:white;
+}
+
+#testScreen{
+  display:none;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 25px;
+  background:#f1ede2;
+  border-bottom:1px solid var(--line);
+  font-family:monospace;
+}
+
+.timer{
+  color:var(--navy);
+  font-weight:bold;
+  font-size:16px;
+}
+
+.timer.warning{
+  color:var(--red);
+}
+
+.progress{
+  height:6px;
+  background:#ddd5c2;
+  flex:1;
+  margin:0 20px;
+  border-radius:5px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:var(--gold);
+  transition:.3s;
+}
+
+.question-area{
+  padding:35px 30px;
+}
+
+.question-number{
+  color:var(--gold-dark);
+  font-family:monospace;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+.question{
+  font-family:Georgia,serif;
+  font-size:22px;
+  line-height:1.55;
+  margin-bottom:25px;
+}
+
+.options{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.option{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:15px;
+  background:white;
+  border:1px solid var(--line);
+  cursor:pointer;
+  border-radius:4px;
+}
+
+.option:hover{
+  border-color:var(--gold);
+  background:#fffdf7;
+}
+
+.option.selected{
+  border-color:var(--gold);
+  background:#fdf5df;
+}
+
+.letter{
+  width:27px;
+  height:27px;
+  min-width:27px;
+  border-radius:50%;
+  border:2px solid #bcb4a3;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-family:monospace;
+}
+
+.option.selected .letter{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:white;
+}
+
+.navigation{
+  display:flex;
+  justify-content:space-between;
+  padding:0 30px 30px;
+}
+
+.prev{
+  background:white;
+  border:1px solid var(--line);
+}
+
+.next{
+  background:var(--navy);
+  color:white;
+}
+
+.submit{
+  background:var(--gold);
+  color:#211a04;
+}
+
+.dots{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:0 30px 25px;
+}
+
+.dot{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid #ccc3ae;
+  background:white;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.dot.active{
+  outline:2px solid var(--navy);
+}
+
+.dot.done{
+  background:#f1e5bd;
+  border-color:var(--gold);
+}
+
+#resultScreen{
+  display:none;
+  padding:40px 30px;
+  text-align:center;
+}
+
+.score{
+  font-family:Georgia,serif;
+  font-size:65px;
+  color:var(--navy);
+  font-weight:bold;
+}
+
+.score-label{
+  color:var(--soft);
+}
+
+.result-card{
+  background:white;
+  border:1px solid var(--line);
+  margin:25px 0;
+  padding:20px;
+  text-align:left;
+}
+
+.result-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.success{
+  color:var(--green);
+  font-weight:bold;
+}
+
+@media(max-width:600px){
+
+  .header h1{
+    font-size:25px;
+  }
+
+  .question{
+    font-size:19px;
+  }
+
+  .status{
+    padding:12px 15px;
+  }
+
+  .question-area,
+  .navigation,
+  .dots{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+
+    <div class="small-title">
+      NQT · Verbal Ability
+    </div>
+
+    <h1>
+      Sentence Completion Assessment
+    </h1>
+
+    <p>
+      20 Questions · Advanced Level · 20 Minutes
+    </p>
+
+  </div>
+
+
+  <!-- START SCREEN -->
+
+  <div class="start-screen" id="startScreen">
+
+    <h2>
+      Candidate Registration
+    </h2>
+
+    <div class="instructions">
+
+      <strong>Instructions</strong>
+
+      <br><br>
+
+      • There are 20 questions.<br>
+      • You have 20 minutes.<br>
+      • Select the best answer for each question.<br>
+      • Once submitted, your score will be recorded.<br>
+      • The test will automatically submit when time expires.
+
+    </div>
+
+    <label>
+      Candidate Name
+    </label>
+
+    <input
+      id="candidateName"
+      type="text"
+      placeholder="Enter your full name"
+      autocomplete="name"
+    >
+
+    <button
+      class="start-btn"
+      onclick="startTest()"
+    >
+      Start Test
+    </button>
+
+  </div>
+
+
+  <!-- TEST SCREEN -->
+
+  <div id="testScreen">
+
+    <div class="status">
+
+      <span id="counter">
+        Question 1 / 20
+      </span>
+
+      <div class="progress">
+        <div
+          class="progress-bar"
+          id="progressBar"
+        ></div>
+      </div>
+
+      <span
+        class="timer"
+        id="timer"
+      >
+        20:00
+      </span>
+
+    </div>
+
+
+    <div
+      class="question-area"
+      id="questionArea"
+    >
+    </div>
+
+
+    <div
+      class="dots"
+      id="dots"
+    >
+    </div>
+
+
+    <div class="navigation">
+
+      <button
+        class="prev"
+        id="prevBtn"
+        onclick="previousQuestion()"
+      >
+        ← Previous
+      </button>
+
+      <button
+        class="next"
+        id="nextBtn"
+        onclick="nextQuestion()"
+      >
+        Next →
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- RESULT SCREEN -->
+
+  <div id="resultScreen">
+
+    <h2>
+      Assessment Complete
+    </h2>
+
+    <div
+      class="score"
+      id="score"
+    >
+      0
+    </div>
+
+    <div class="score-label">
+      Correct Answers
+    </div>
+
+    <div class="result-card">
+
+      <div class="result-row">
+        <span>Candidate</span>
+        <strong id="resultName"></strong>
+      </div>
+
+      <div class="result-row">
+        <span>Score</span>
+        <strong id="resultScore"></strong>
+      </div>
+
+      <div class="result-row">
+        <span>Accuracy</span>
+        <strong id="resultPercentage"></strong>
+      </div>
+
+      <div class="result-row">
+        <span>Time Used</span>
+        <strong id="resultTime"></strong>
+      </div>
+
+      <div class="result-row">
+        <span>Status</span>
+        <strong
+          class="success"
+          id="saveStatus"
+        >
+          Saving result...
+        </strong>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/*
+========================================================
+IMPORTANT
+========================================================
+
+PUT YOUR GOOGLE APPS SCRIPT URL HERE.
+
+Example:
+
+https://script.google.com/macros/s/XXXXXXXX/exec
+
+========================================================
+*/
+
+const GOOGLE_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbxe6Y5DgNbiBpFzAWmb5_rVNZywUEQ1aUWF1MbYxCKJxIeDI2QA2a6sNeZvE-CefcAgeg/exec";
+
+
+/*
+========================================================
+QUESTIONS
+========================================================
+*/
+
+const QUESTIONS = [
+
+{
+q:"Although the proposal appeared financially attractive, ___________.",
+opts:[
+"its long-term environmental consequences were largely overlooked",
+"the committee approved it without further discussion",
+"investors immediately withdrew their support",
+"the project was completed ahead of schedule",
+"no significant objections were raised"
+],
+a:0
+},
+
+{
+q:"Had the researcher verified the data earlier, ___________.",
+opts:[
+"the report was published without modification",
+"the error might have been detected before publication",
+"the experiment will produce different results",
+"the findings are accepted by everyone",
+"no further investigation was required"
+],
+a:1
+},
+
+{
+q:"Despite the speaker's apparent confidence, ___________.",
+opts:[
+"the audience applauded enthusiastically",
+"the presentation exceeded everyone's expectations",
+"several inconsistencies in his argument became evident",
+"the issue was resolved immediately",
+"his proposal received unanimous approval"
+],
+a:2
+},
+
+{
+q:"So persuasive was the lawyer's argument that ___________.",
+opts:[
+"the judge dismissed the case immediately",
+"the opposing counsel refused to respond",
+"the evidence was declared inadmissible",
+"even the most skeptical members of the jury reconsidered their position",
+"the trial was postponed indefinitely"
+],
+a:3
+},
+
+{
+q:"Rarely has a technological innovation ___________.",
+opts:[
+"been introduced without attracting attention",
+"received such widespread adoption in such a short period",
+"failed to generate any public discussion",
+"remained completely unchanged",
+"been ignored by consumers and businesses alike"
+],
+a:1
+},
+
+{
+q:"No sooner had the announcement been made than ___________.",
+opts:[
+"the company's share price began to fall sharply",
+"investors had already forgotten about it",
+"the board postponed the original announcement",
+"the market remained completely unaffected",
+"the decision was praised by every analyst"
+],
+a:0
+},
+
+{
+q:"Little did the villagers suspect that ___________.",
+opts:[
+"the storm would pass without causing damage",
+"the warning had been issued several hours earlier",
+"the authorities were monitoring the situation",
+"the roads remained open throughout the night",
+"the seemingly harmless river would soon overflow its banks"
+],
+a:4
+},
+
+{
+q:"Only after reviewing the financial records ___________.",
+opts:[
+"the auditors had reached their conclusion",
+"did the investigators realize how extensive the fraud was",
+"the company announced its annual profits",
+"were the shareholders invited to the meeting",
+"the accounts had been archived"
+],
+a:1
+},
+
+{
+q:"Given the ambiguity of the instructions, ___________.",
+opts:[
+"everyone completed the task identically",
+"no employee required clarification",
+"several applicants interpreted the requirements differently",
+"the examination was unusually straightforward",
+"the instructions were universally praised"
+],
+a:2
+},
+
+{
+q:"Such was the intensity of the storm that ___________.",
+opts:[
+"several coastal roads were temporarily closed",
+"the weather remained pleasant throughout the evening",
+"no disruption was reported anywhere",
+"the fishermen continued working normally",
+"the authorities cancelled no services"
+],
+a:0
+},
+
+{
+q:"Were the government to ignore the warning signs, ___________.",
+opts:[
+"the economy had recovered already",
+"the situation would become increasingly difficult to control",
+"the crisis was resolved last year",
+"investors had already returned",
+"the policy was immediately successful"
+],
+a:1
+},
+
+{
+q:"The novelist's latest work, while stylistically impressive, ___________.",
+opts:[
+"was universally regarded as her finest achievement",
+"contained no significant weaknesses",
+"was completed several years ago",
+"occasionally sacrificed clarity for elaborate prose",
+"received unanimous praise from every critic"
+],
+a:3
+},
+
+{
+q:"Not until the negotiations had completely broken down ___________.",
+opts:[
+"did both parties agree to seek independent mediation",
+"the two sides had reached a compromise",
+"the agreement was signed immediately",
+"the dispute had disappeared",
+"the original proposal was accepted unanimously"
+],
+a:0
+},
+
+{
+q:"Seldom do economic forecasts ___________.",
+opts:[
+"consider both domestic and international factors",
+"remain relevant for more than a few months",
+"provide absolute certainty about future events",
+"influence government policy",
+"attract the attention of financial analysts"
+],
+a:2
+},
+
+{
+q:"Had the warning been taken seriously, ___________.",
+opts:[
+"the accident could probably have been prevented",
+"the authorities ignored the evidence",
+"the investigation will continue tomorrow",
+"the damage was unavoidable",
+"the emergency had already ended"
+],
+a:0
+},
+
+{
+q:"So complicated were the regulations that ___________.",
+opts:[
+"every applicant understood them immediately",
+"the process became considerably easier",
+"even experienced professionals struggled to interpret them correctly",
+"no one required legal assistance",
+"the procedure was completed in minutes"
+],
+a:2
+},
+
+{
+q:"Not only did the company fail to meet its targets, but ___________.",
+opts:[
+"its competitors also experienced similar difficulties",
+"it exceeded all expectations",
+"its management announced record profits",
+"its reputation among customers improved significantly",
+"it also lost several of its most important clients"
+],
+a:4
+},
+
+{
+q:"Despite having received extensive training, the new employees ___________.",
+opts:[
+"performed every task without supervision",
+"occasionally struggled when confronted with unfamiliar situations",
+"required no further guidance",
+"completed the project several weeks early",
+"were immediately promoted to senior positions"
+],
+a:1
+},
+
+{
+q:"Such was the scale of the infrastructure failure that ___________.",
+opts:[
+"normal services continued without interruption",
+"the public experienced no inconvenience",
+"several essential services were disrupted simultaneously",
+"the authorities cancelled the investigation",
+"repairs were unnecessary"
+],
+a:2
+},
+
+{
+q:"If the committee had considered the evidence more carefully, ___________.",
+opts:[
+"it might have reached a different conclusion",
+"the decision was announced yesterday",
+"the evidence will be reviewed tomorrow",
+"the witnesses had already left",
+"the investigation is now complete"
+],
+a:0
+}
+
+];
+
+
+/*
+========================================================
+TEST VARIABLES
+========================================================
+*/
+
+const TOTAL = QUESTIONS.length;
+
+const TEST_TIME = 20 * 60;
+
+let currentQuestion = 0;
+
+let answers =
+  new Array(TOTAL).fill(null);
+
+let timeLeft = TEST_TIME;
+
+let timerInterval = null;
+
+let testStarted = false;
+
+let submitted = false;
+
+
+/*
+========================================================
+START TEST
+========================================================
+*/
+
+function startTest(){
+
+  const name =
+    document
+      .getElementById("candidateName")
+      .value
+      .trim();
+
+  if(!name){
+
+    alert("Please enter your name.");
+
+    return;
+  }
+
+  testStarted = true;
+
+  document
+    .getElementById("startScreen")
+    .style.display = "none";
+
+  document
+    .getElementById("testScreen")
+    .style.display = "block";
+
+  createDots();
+
+  renderQuestion();
+
+  startTimer();
+
+}
+
+
+/*
+========================================================
+RENDER QUESTION
+========================================================
+*/
+
+function renderQuestion(){
+
+  const q =
+    QUESTIONS[currentQuestion];
+
+  const letters =
+    ["A","B","C","D","E"];
+
+  let html = "";
+
+  html += `
+    <div class="question-number">
+      QUESTION ${String(currentQuestion + 1).padStart(2,"0")}
+    </div>
+
+    <div class="question">
+      ${q.q}
+    </div>
+
+    <div class="options">
+  `;
+
+  q.opts.forEach((option,index)=>{
+
+    const selected =
+      answers[currentQuestion] === index
+      ? "selected"
+      : "";
+
+    html += `
+      <div
+        class="option ${selected}"
+        onclick="selectAnswer(${index})"
+      >
+
+        <div class="letter">
+          ${letters[index]}
+        </div>
+
+        <div>
+          ${option}
+        </div>
+
+      </div>
+    `;
+
+  });
+
+  html += `
+    </div>
+  `;
+
+  document
+    .getElementById("questionArea")
+    .innerHTML = html;
+
+
+  document
+    .getElementById("counter")
+    .textContent =
+      `Question ${currentQuestion + 1} / ${TOTAL}`;
+
+
+  document
+    .getElementById("progressBar")
+    .style.width =
+      ((currentQuestion + 1) / TOTAL * 100) + "%";
+
+
+  document
+    .getElementById("prevBtn")
+    .disabled =
+      currentQuestion === 0;
+
+
+  const next =
+    document.getElementById("nextBtn");
+
+  if(currentQuestion === TOTAL - 1){
+
+    next.textContent =
+      "Submit Test";
+
+    next.className =
+      "submit";
+
+  }else{
+
+    next.textContent =
+      "Next →";
+
+    next.className =
+      "next";
+
+  }
+
+  updateDots();
+
+}
+
+
+/*
+========================================================
+SELECT ANSWER
+========================================================
+*/
+
+function selectAnswer(index){
+
+  if(submitted) return;
+
+  answers[currentQuestion] = index;
+
+  renderQuestion();
+
+}
+
+
+/*
+========================================================
+NEXT
+========================================================
+*/
+
+function nextQuestion(){
+
+  if(currentQuestion === TOTAL - 1){
+
+    submitTest();
+
+    return;
+  }
+
+  currentQuestion++;
+
+  renderQuestion();
+
+}
+
+
+/*
+========================================================
+PREVIOUS
+========================================================
+*/
+
+function previousQuestion(){
+
+  if(currentQuestion > 0){
+
+    currentQuestion--;
+
+    renderQuestion();
+
+  }
+
+}
+
+
+/*
+========================================================
+DOTS
+========================================================
+*/
+
+function createDots(){
+
+  const container =
+    document.getElementById("dots");
+
+  container.innerHTML = "";
+
+  for(let i=0;i<TOTAL;i++){
+
+    const dot =
+      document.createElement("button");
+
+    dot.className = "dot";
+
+    dot.textContent = i + 1;
+
+    dot.onclick = function(){
+
+      currentQuestion = i;
+
+      renderQuestion();
+
+    };
+
+    container.appendChild(dot);
+
+  }
+
+}
+
+
+function updateDots(){
+
+  const dots =
+    document.querySelectorAll(".dot");
+
+  dots.forEach((dot,index)=>{
+
+    dot.classList.toggle(
+      "active",
+      index === currentQuestion
+    );
+
+    dot.classList.toggle(
+      "done",
+      answers[index] !== null
+    );
+
+  });
+
+}
+
+
+/*
+========================================================
+TIMER
+========================================================
+*/
+
+function startTimer(){
+
+  updateTimer();
+
+  timerInterval =
+    setInterval(()=>{
+
+      timeLeft--;
+
+      updateTimer();
+
+      if(timeLeft <= 0){
+
+        clearInterval(timerInterval);
+
+        submitTest();
+
+      }
+
+    },1000);
+
+}
+
+
+function updateTimer(){
+
+  const minutes =
+    Math.floor(timeLeft / 60);
+
+  const seconds =
+    timeLeft % 60;
+
+  const timer =
+    document.getElementById("timer");
+
+  timer.textContent =
+    minutes + ":" +
+    String(seconds).padStart(2,"0");
+
+  if(timeLeft <= 60){
+
+    timer.classList.add("warning");
+
+  }
+
+}
+
+
+/*
+========================================================
+SUBMIT TEST
+========================================================
+*/
+
+function submitTest(){
+
+  if(submitted) return;
+
+  submitted = true;
+
+  clearInterval(timerInterval);
+
+  let score = 0;
+
+  QUESTIONS.forEach((question,index)=>{
+
+    if(
+      answers[index] === question.a
+    ){
+
+      score++;
+
+    }
+
+  });
+
+
+  const percentage =
+    Math.round(
+      (score / TOTAL) * 100
+    );
+
+
+  const timeUsed =
+    TEST_TIME - timeLeft;
+
+
+  const candidateName =
+    document
+      .getElementById("candidateName")
+      .value
+      .trim();
+
+
+  showResult(
+    candidateName,
+    score,
+    percentage,
+    timeUsed
+  );
+
+
+  saveResult(
+    candidateName,
+    score,
+    percentage,
+    timeUsed
+  );
+
+}
+
+
+/*
+========================================================
+RESULT
+========================================================
+*/
+
+function showResult(
+  name,
+  score,
+  percentage,
+  timeUsed
+){
+
+  document
+    .getElementById("testScreen")
+    .style.display = "none";
+
+  document
+    .getElementById("resultScreen")
+    .style.display = "block";
+
+
+  document
+    .getElementById("score")
+    .textContent = score;
+
+
+  document
+    .getElementById("resultName")
+    .textContent = name;
+
+
+  document
+    .getElementById("resultScore")
+    .textContent =
+      score + " / " + TOTAL;
+
+
+  document
+    .getElementById("resultPercentage")
+    .textContent =
+      percentage + "%";
+
+
+  document
+    .getElementById("resultTime")
+    .textContent =
+      formatTime(timeUsed);
+
+}
+
+
+/*
+========================================================
+SAVE RESULT TO GOOGLE SHEETS
+========================================================
+*/
+
+function saveResult(
+  name,
+  score,
+  percentage,
+  timeUsed
+){
+
+  const status =
+    document.getElementById("saveStatus");
+
+
+  if(
+    GOOGLE_SCRIPT_URL.includes(
+      "YOUR_SCRIPT_ID"
+    )
+  ){
+
+    status.textContent =
+      "Backend URL not configured";
+
+    status.style.color =
+      "#b23a48";
+
+    return;
+
+  }
+
+
+  const payload = {
+
+    name:name,
+
+    score:score,
+
+    total:TOTAL,
+
+    percentage:percentage,
+
+    timeUsed:formatTime(timeUsed)
+
+  };
+
+
+  fetch(
+    GOOGLE_SCRIPT_URL,
+    {
+      method:"POST",
+
+      mode:"no-cors",
+
+      headers:{
+        "Content-Type":
+          "text/plain;charset=utf-8"
+      },
+
+      body:JSON.stringify(payload)
+
+    }
+  )
+  .then(()=>{
+
+    status.textContent =
+      "Result recorded successfully";
+
+  })
+  .catch(()=>{
+
+    status.textContent =
+      "Could not save result";
+
+    status.style.color =
+      "#b23a48";
+
+  });
+
+}
+
+
+/*
+========================================================
+FORMAT TIME
+========================================================
+*/
+
+function formatTime(seconds){
+
+  const minutes =
+    Math.floor(seconds / 60);
+
+  const sec =
+    seconds % 60;
+
+  return (
+    minutes +
+    ":" +
+    String(sec).padStart(2,"0")
+  );
+
+}
+
+</script>
+
+</body>
+</html>
